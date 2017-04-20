@@ -29,28 +29,79 @@ try {
 	
 	/* Queries and variables */
 	String query;
+	
+	/* Vehicle Information */
 	query="SELECT * FROM finalproject.car WHERE ruid=" + myruid;
 	ResultSet vi = stmt.executeQuery(query);
 	vi.next();
-	/* stmt.close(); */
+	
+	/* Leader Board */
 	query="SELECT * FROM finalproject.accounts ORDER BY rankScore";
 	Statement stmt1=conn.createStatement();
 	ResultSet lb = stmt1.executeQuery(query);
 	lb.next();
-	/* stmt1.close(); */
+	
+	/* Login Name */
 	query="SELECT loginName FROM finalproject.accounts WHERE ruid=" + myruid;
 	Statement stmt2=conn.createStatement();
 	ResultSet lN = stmt2.executeQuery(query);
 	lN.next();
-	/* stmt1.close(); */
 	
+	/* Contact Information */
+	query="SELECT * FROM finalproject.accounts WHERE ruid=" + myruid;
+	Statement stmt3=conn.createStatement();
+	ResultSet ci = stmt3.executeQuery(query);
+	ci.next();
+	
+	/*
+	/* Comments */
+	query="SELECT * FROM finalproject.ratings WHERE toRUID=" + myruid;
+	Statement stmt4=conn.createStatement();
+	ResultSet pc = stmt4.executeQuery(query);
+	pc.next();
+	pc.close();
+	*/
+	
+	/* Rating Calculations */
+	query="SELECT SUM(rating) FROM finalproject.ratings WHERE toRUID=" + myruid;
+	Statement stmt5=conn.createStatement();
+	ResultSet pr = stmt5.executeQuery(query);
+	pr.next();
+	double sumR = pr.next()
+	pr.close();
+	
+	query="SELECT COUNT(*) FROM finalproject.ratings WHERE toRUID=" + myruid;
+	ResultSet pr = stmt5.executeQuery(query);
+	pr.next();
+	double numR = pr.next()
+	pr.close();
+	
+	query="SELECT COUNT(*) FROM finalproject.rideLog WHERE as=/"Driver/" AND toRUID=" + myruid;
+	ResultSet pr = stmt5.executeQuery(query);
+	pr.next(); 
+	int numGiven = pr.next();
+	pr.close();
+	
+	query="SELECT COUNT(*) FROM finalproject.rideLog WHERE as=/"Driver/" AND toRUID=" + myruid;
+	ResultSet pr = stmt5.executeQuery(query);
+	pr.next();
+	int numTaken = pr.next();
+	pr.close()
+	stmt5.close()
+	
+	/* Rating Calculation */
+	double avgR = sumR/numR;
+	double avgP = (avgR/5) * 100;
 %>
+	
 <!-- Top Title -->
 <header class="w3-container w3-top w3-white w3-xlarge w3-padding-16">
   <div class="w3-left w3-padding">Profile : <%out.print(lN.getString("loginName"));%></div>
 </header>
 
-<%lN.close();%>
+<%
+	lN.close();
+%>
 
 <!-- Logout -->
 <div style="float:right">
@@ -79,19 +130,19 @@ try {
   <!-- About Section -->
   <div class="w3-container w3-dark-grey w3-center w3-text-light-grey w3-padding-32" id="about">
 	  
-	  <!-- User Rating -->
+	  <!-- User Rating --> <!-- *ADD COMMENTS VIEWABLE?* -->
       <h4 class="w3-padding-16">User Rating</h4>
       <div class="w3-white">
-        <div class="w3-container w3-padding-small w3-center w3-green" style="width:85%">85%</div>
+        <div class="w3-container w3-padding-small w3-center w3-green" style="width:${avgP}%>"><%out.print(avgP);%>%</div>
       </div>
 	  <div style="width:100%">
 	    <div style="width:20%; float:left">
 		  <h4>Rides Given</h4>
-		  <p>Some Number</p>
+		  <p><%out.print(numGiven);%></p>
 		</div>
 		<div style="width:80%; float:right">
 		  <h4>Rides Received</h4>
-		  <p>Some Number</p>
+		  <p><%out.print(numTaken);%></p>
 		</div>
 	  </div>
 	  <div style="clear:both"></div>
@@ -155,18 +206,22 @@ try {
       <h4 class="w3-center"><b>Contact Information</b></h4>
       <div class="w3-section">
         <label>Name</label>
-        <p>Enter Name Here</p>
+        <p><%out.print(ci.getString("firstName") ci.getString("lastName");%></p>
       </div>
       <div class="w3-section">
         <label>Phone</label>
-        <p>Enter Phone Here</p>
+        <p><%out.print(ci.getString("phone"));%></p>
       </div>
       <div class="w3-section">
         <label>Email</label>
-        <p>Enter Email Here</p>
+        <p><%out.print(ci.getString("email"));%></p>
       </div>
     </div>
   </div>
+
+<%
+	ci.close();
+%>
 
   <!-- Leaderboard -->
   <div class="w3-container w3-grey w3-padding-32 w3-padding-large" id="leaderboard">
@@ -204,6 +259,8 @@ try {
 	stmt.close();
  	stmt1.close();
  	stmt2.close();
+	stmt3.close();
+	stmt4.close();
 	conn.close();
 
   }
