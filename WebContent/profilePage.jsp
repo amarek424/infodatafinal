@@ -25,26 +25,21 @@ try {
 	Connection conn=DriverManager.getConnection(url, username, password);
 	Statement stmt=conn.createStatement();
 	
-	/* Queries and variables */
-	String query;
-	query="SELECT * FROM finalproject.car WHERE ruid=" + myruid;
+	String query="SELECT * FROM finalproject.car WHERE ruid=" + myruid;
 	ResultSet vi = stmt.executeQuery(query);
-	query="SELECT * FROM finalproject.accounts ORDER BY rankScore";
-	ResultSet lb = stmt.executeQuery(query);
-	query="SELECT loginName FROM finalproject.accounts WHERE ruid=" + myruid;
-	ResultSet lN = stmt.executeQuery(query);
-	
-	/* Close stmt and conn */
-	stmt.close();
-	conn.close();
-
 %>
+	
 <!-- Top Title -->
 <header class="w3-container w3-top w3-white w3-xlarge w3-padding-16">
   <div class="w3-left w3-padding">Profile : <%out.print(lN.getString("loginName"));%></div>
 </header>
 
-<%lN.close();%>
+<%
+	lN.close();
+	
+	String query="SELECT * FROM finalproject.accounts ORDER BY rankScore";
+	ResultSet lb = stmt.executeQuery(query);
+%>
 
 <!-- Logout -->
 <div style="float:right">
@@ -138,6 +133,9 @@ try {
 <%
 	}
 	vi.close();
+	
+	String query="SELECT loginName FROM finalproject.accounts WHERE ruid=" + myruid;
+	ResultSet lN = stmt.executeQuery(query);
 %>		
 	</table>
     </div>
@@ -193,6 +191,9 @@ try {
   
   <div class="w3-black w3-center w3-padding-24">Made by Alex Marek, Jacek Zarski & Armin Grossrieder</div>
   <%
+	/* Close stmt and conn */
+	stmt.close();
+	conn.close();
   }
 	catch(Exception e)
 	{
